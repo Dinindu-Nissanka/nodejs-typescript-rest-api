@@ -18,7 +18,8 @@ export const createBlogHandler = async (
   next: NextFunction
 ): Promise<Response | undefined> => {
   try {
-    const blog: Blog = await createBlog(req.body);
+    const userId = req.user?.id;
+    const blog: Blog = await createBlog({ ...req.body, author: userId });
     return res.status(201).send(blog);
   } catch (error) {
     next(error);
@@ -50,7 +51,8 @@ export const updateBlogHandler = async (
   next: NextFunction
 ): Promise<Response | undefined> => {
   try {
-    const blog: Blog = await updateBlog(req.params.id, req.body);
+    const userId = req.user?.id;
+    const blog: Blog = await updateBlog(req.params.id, req.body, userId);
     return res.status(200).send(blog);
   } catch (error) {
     next(error);
@@ -64,7 +66,8 @@ export const deleteBlogHandler = async (
   next: NextFunction
 ): Promise<Response | undefined> => {
   try {
-    await deleteBlog(req.params.id);
+    const userId = req.user?.id;
+    await deleteBlog(req.params.id, userId);
     return res.status(204).send();
   } catch (error) {
     next(error);

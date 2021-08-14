@@ -1,4 +1,4 @@
-import { NotFoundException } from '../exceptions';
+import { AuthorizationFailedException, NotFoundException } from '../exceptions';
 import BlogModel, { IBlogDB } from '../models/blog.model';
 import UserModel from '../models/user.model';
 import transform from '../transformers/blog.transformer';
@@ -33,8 +33,19 @@ export const getBlog = async (id: string): Promise<Blog | null> => {
 // Update a blog from database convert it to the Blog type and send it back to the controller
 export const updateBlog = async (
   id: string,
-  blogUpdate: BlogUpdateInput
+  blogUpdate: BlogUpdateInput,
+  userId: string | undefined
 ): Promise<Blog> => {
+  const blog: Blog | null = await getBlog(id);
+  if (!blog) {
+    throw new NotFoundException(`Blog with an id ${id} not found`);
+  }
+  if (blog.author.id !== userId) {
+    throw new AuthorizationFailedException([
+      `User is not authorized to perform update on the requested blog`,
+    ]);
+  }
+
   const updatedBlog: IBlogDB | null = await BlogModel.findByIdAndUpdate(
     id,
     blogUpdate,
@@ -49,13 +60,21 @@ export const updateBlog = async (
 };
 
 // Delete a blog from database convert
-export const deleteBlog = async (id: string): Promise<boolean> => {
-  const deletedBlog: IBlogDB | null = await BlogModel.findByIdAndDelete(
-    id
-  ).populate('author');
-  if (!deletedBlog) {
+export const deleteBlog = async (
+  id: string,
+  userId: string | undefined
+): Promise<boolean> => {
+  const blog: Blog | null = await getBlog(id);
+  if (!blog) {
     throw new NotFoundException(`Blog with an id ${id} not found`);
   }
+  if (blog.author.id !== userId) {
+    throw new AuthorizationFailedException([
+      `User is not authorized to perform delete on the requested blog`,
+    ]);
+  }
+
+  await BlogModel.findByIdAndDelete(id);
   return true;
 };
 

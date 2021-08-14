@@ -8,5 +8,9 @@
     "forceConsistentCasingInFileNames": true,
     "rootDir": "./",
     "outDir": "./build",
+    "typeRoots": [
+      "./types",
+      "./node_modules/@types"
+    ],
   }
 }
