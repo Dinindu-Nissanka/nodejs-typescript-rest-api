@@ -1,7 +1,12 @@
 import * as dotenv from 'dotenv';
 import express from 'express';
+import passport from 'passport';
 import Logger from './utils/logger';
-import { loggerMiddleware, errorHandlerMiddleware } from './middlewares';
+import {
+  loggerMiddleware,
+  errorHandlerMiddleware,
+  authStrategy,
+} from './middlewares';
 import connect from './db/connect';
 import routes from './routes';
 
@@ -13,6 +18,8 @@ app.use(loggerMiddleware);
 if (!process.env.PORT) {
   process.exit(0);
 }
+
+authStrategy(passport);
 
 app.use(express.json());
 app.use('/api/v1', routes);

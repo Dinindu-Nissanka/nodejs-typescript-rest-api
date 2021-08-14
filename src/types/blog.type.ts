@@ -16,7 +16,6 @@ export type BlogCreateInput = {
 export type BlogUpdateInput = {
   title?: string;
   content?: string;
-  author?: string;
 };
 
 export type Pagination = {

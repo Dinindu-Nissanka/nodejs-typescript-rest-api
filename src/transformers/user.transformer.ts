@@ -1,12 +1,18 @@
 import { IUserDB } from '../models/user.model';
-import { User } from '../types/user.type';
+import { AuthUser, User } from '../types/user.type';
 
-const transform = (user: IUserDB): User => {
+export const transform = (user: IUserDB): User => {
   return {
-    id: user._id,
+    id: user._id.toString(),
     name: user.name,
     email: user.email,
+    role: user.role,
   };
 };
 
-export default transform;
+export const transformAuthUser = (user: IUserDB, token: string): AuthUser => {
+  return {
+    id: user._id.toString(),
+    token,
+  };
+};

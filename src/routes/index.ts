@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import userRouter from './user.route';
 import blogRouter from './blog.route';
+import authRouter from './auth.route';
 
 const router = Router();
 
@@ -19,10 +19,10 @@ router.get('/health-check', async (req, res) => {
   }
 });
 
-// Import all user routes
-router.use('/users', userRouter);
-
 // Import all blog routes
 router.use('/blogs', blogRouter);
+
+//Import all auth routes
+router.use('/auth', authRouter);
 
 export default router;
